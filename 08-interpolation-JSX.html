@@ -1,0 +1,28 @@
+<body>
+  <h2>Comprender y utilizar la interpolación en JSX</h2>
+  <p>Es la manera de explicar como podemos jugar dentro de JSX, donde puedo colocar strings, javascript templates, un condicional ternario... y todo en el mismo archivo y línea de código!</p>
+  <div id="root"></div>
+  <script src="https://unpkg.com/react@16.12.0/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@16.12.0/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.8.3/babel.js"></script>
+  <script type="text/babel">
+    function CharacterCount({text}) {
+      return (
+        <div>
+          {`El texto "${text}" tiene `}
+          {text.length ? <strong>{text.length}</strong> : 'No'}
+          {' caracteres'}
+        </div>
+      )
+    }
+
+    const element = (
+      <>
+        <CharacterCount text="Hello World" />
+        <CharacterCount text="" />
+      </>
+    )
+
+    ReactDOM.render(element, document.getElementById('root'))
+  </script>
+</body>

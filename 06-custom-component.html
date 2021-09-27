@@ -1,0 +1,27 @@
+<body>
+  <h2>Reusable React Component. Componente reutilizable en tus proyectos</h2>
+  <p>Cuando se pone la letra MAYÚSCULA en JSX, eso es lo mismo que llamar a React.createElement con la función a la que hace referencia. Eso le permite crear un componente personalizado que puede usar para reutilizar el código una y otra vez.</p>
+  <div id="root"></div>
+
+  <script src="https://unpkg.com/react@16.12.0/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@16.12.0/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.8.3/babel.js"></script>
+
+  <script type="text/babel">
+  const Message = props => <div className="message">{props.children} {props.msg}</div>
+    const element = (
+      <div className="container">
+        <Message>Hello world</Message>
+        <Message>Bye world</Message>
+        {/* No eficiente */}
+        {Message({msg: '1'})}
+        {Message({msg: '2'})}
+      </div>
+    )
+
+    console.log(<Message>Hello world</Message>)
+
+    ReactDOM.render(element, document.getElementById('root'))
+  </script>
+
+</body>

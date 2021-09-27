@@ -1,0 +1,36 @@
+<body>
+  <h2>Re-render CLOCK</h2>
+  <p>Normalmente, cada vez que cambia el estado, no tiene que volver a renderizar toda la aplicación, pero quería poner esto para que veas lo que React realmente está haciendo por ti. Cuando crea estos elementos de React, le da eso a ReactDOM.render o activa una re-renderización de un componente, y React va a comparar los elementos que devolvió esta vez con los elementos que devolvió la última vez tiempo.</p>
+  <div id="root"></div>
+
+  <script src="https://unpkg.com/react@16.12.0/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@16.12.0/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.8.3/babel.js"></script>
+
+  <script type="text/babel">
+    const root = document.getElementById('root');
+
+    const clock = () => {
+      const time = new Date().toLocaleTimeString();
+      const element = (
+        <>
+          <p>Evitando renderizar todo el tiempo mi componente. Con este truqui ahora puedo acceder al elemento</p>
+          {time}
+        </>
+      )
+
+      /*const element2 = (
+        <div>
+          <div>Hola</div>
+          {time}
+        </div>
+      )
+       // root.innerHTML = element; */
+      ReactDOM.render(element, root);
+    }
+
+    clock()
+    setInterval(clock, 1000)
+  </script>
+
+</body>
