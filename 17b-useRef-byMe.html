@@ -1,0 +1,45 @@
+<body>
+  <h2>useRef Hook</h2>
+  <h3>declarative vs imperative</h3>
+  <p>Un estilo declarativo, como el que tiene react, le permite controlar el flujo y el estado de su aplicación diciendo "Debería verse así". Un estilo imperativo le da la vuelta a eso y le permite controlar su aplicación diciendo "Esto es lo que debe hacer"</p>
+  <p>Podemos usarlo para almacenar información mutable, como dijo Dan Abramov</p>
+  <quote>useRef() es basicamente useState({current: initialValue})[0]</quote>
+  <p>Significa que podemos modificar el valor de CURRENT del valor que DEVUELVE useRef en cualquier momento:</p>
+  <code>const value = useRef('foo') |||||||</code>
+  <code>value.current = 'bar'</code>
+  <p>A diferencia de lo que sucede con el hook useState que nos obliga a usar la función setState para modificar el valor del estado. Lo importante aquí es: modificar el valor de la referencia por medio de la propiedad current no produce un nuevo render.</p>
+
+  <hr>
+  <div id="root"></div>
+
+  <script src="https://unpkg.com/react@16.12.0/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@16.12.0/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.8.3/babel.js"></script>
+
+  <script type="text/babel">
+    function CustomInput() {
+      const textInput = useRef();
+
+      function handleFocus() {
+        // fyi -- modificar el valor de la referencia por medio de la propiedad current no produce un nuevo render.
+        textInput.current.focus();
+      }
+
+      return(
+        <div>
+          <input
+            type="text"
+            ref={textInput}
+          />
+          <input
+            type="text"
+            value="Focus the text input"
+            onClick={handleFocus}
+          />
+        </div>
+      )
+    }
+    ReactDOM.render(<CustomInput/>, document.getElementById('root'));
+  </script>
+
+</body>

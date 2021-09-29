@@ -1,0 +1,43 @@
+<body>
+  <h2>Administrando los efectos secundarios en un componente React con useEffect hook</h2>
+  <p>Aquí interactuarás con localStorageAPI, pero esto mismo se aplicaría si interactuamos con un servidor backend, o la API de geolocalización, o cualquier otra cosa que deba suceder cuando el estado de nuestro componente cambie.</p>
+  <p>Por ejemplo, quiero poder escribir aquí algún valor y guardarlo en localStorage para que cuando actualice la página, ese valor se recupere de localStorage y se cargue en la entrada. Esto se llama efecto secundario y usaremos para tal fin este hook.</p>
+  <div id="root"></div>
+
+  <script src="https://unpkg.com/react@16.12.0/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@16.12.0/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.8.3/babel.js"></script>
+
+  <script type="text/babel">
+    function Dear() {
+      const [name, setName] = React.useState(
+        // Para que nuestro estado en la memoria se inicialice desde localStorage, usamos Window.localStorage.getItem(name), y si no hay nada allí, lo inicializaremos en una cadena vacía por defecto.
+        window.localStorage.getItem("name") || ""
+      );
+      const handleEvent = (event) => {
+        setName(event.target.value);
+      }
+
+      React.useEffect(() => {
+        // guardamos en localstorage el valor nombre
+        window.localStorage.setItem('name', name);
+      })
+
+      return(
+        <div>
+          <form>
+            <label htmlFor="nombre">Nombre:</label>
+            <input
+              onChange={handleEvent}
+              value={name} // Para que el valor de la entrada se actualice con el valor de nuestro estado, usamos el valor de nuestro estado.
+            />
+          </form>
+          {name ? <p>Hola {name}</p> : 'Escribe tu nombre aqui'}
+        </div>
+      )
+    }
+
+    ReactDOM.render(<Dear/>, document.getElementById('root'));
+  </script>
+
+</body>

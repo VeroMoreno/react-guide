@@ -1,0 +1,108 @@
+<body>
+  <h2>Manipular el DOM con reactRef HOOK</h2>
+  <p>Un caso de uso común para esto es cuando está utilizando una biblioteca de terceros que no se creó para o con React específicamente. Para hacer esto, necesitamos tener algún valor que esté asociado con nuestro componente (como el estado) para almacenar una referencia al elemento DOM, pero no activa la repetición cuando se actualiza (a diferencia del estado). React tiene algo específicamente para esto y se llama ref.</p>
+  <hr>
+  <div id="root"></div>
+
+  <script src="https://unpkg.com/react@16.12.0/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@16.12.0/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.8.3/babel.js"></script>
+  <!--usaremos el enlace de esta libreria para este ejemplo-->
+  <script src="https://unpkg.com/vanilla-tilt@1.7.0/dist/vanilla-tilt.min.js"></script>
+  <style>
+    /*
+    Taken from the vanilla-tilt.js demo site:
+    https://micku7zu.github.io/vanilla-tilt.js/index.html
+    */
+    .tilt-root {
+      height: 150px;
+      background-color: red;
+      width: 200px;
+      background-image: -webkit-linear-gradient(
+        315deg,
+        #ff00ba 0%,
+        #fae713 100%
+      );
+      background-image: linear-gradient(135deg, #ff00ba 0%, #fae713 100%);
+      transform-style: preserve-3d;
+      will-change: transform;
+      transform: perspective(1000px) rotateX(0deg) rotateY(0deg)
+        scale3d(1, 1, 1);
+    }
+    .tilt-child {
+      position: absolute;
+      width: 50%;
+      height: 50%;
+      top: 50%;
+      left: 50%;
+      transform: translateZ(30px) translateX(-50%) translateY(-50%);
+      box-shadow: 0 0 50px 0 rgba(51, 51, 51, 0.3);
+      background-color: white;
+    }
+    .totally-centered {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+  </style>
+
+  <script type="text/babel">
+
+function App() {
+  function Tilt({children}) {
+    // 2. Estamos usando este ref prop en el div y pasamos lo que hicimos de una llamada a React useRef.
+      const tiltRef = React.useRef()
+
+      React.useEffect(() => {
+        // 3. Esa referencia tiene una propiedad actual que podemos usar para acceder al valor actual de este objeto.
+        // La razón por la que useRef es un objeto que tiene una propiedad actual es para que podamos mutar la propiedad actual para que sea lo que queramos sin desencadenar una repetición de nuestro componente
+        const tiltNode = tiltRef.current
+        console.log(tiltRef.current)
+        const vanillaTiltOptions = {
+          max: 25,
+          speed: 400,
+          glare: true,
+          'max-glare': 0.5,
+        }
+        VanillaTilt.init(tiltNode, vanillaTiltOptions)
+        return () => {
+          // 4.  Luego devolvemos una función de limpieza para que podamos eliminar todas las referencias de nuestro nodo DOM en vanilla-tilt y eliminar todos los oyentes de eventos que vanilla-tilt puso en nuestro nodo DOM.
+          tiltNode.vanillaTilt.destroy()
+        }
+      }, [])
+
+      // 1. para acceder a los nodos del DOM, inicializamos vanilla-tilt
+      // ref={tiltRef}
+      return (
+        <div ref={tiltRef} className="tilt-root">
+          <div className="tilt-child">{children}</div>
+        </div>
+      )
+    }
+
+      const [showTilt, setShowTilt] = React.useState(true)
+      return (
+        <div>
+          <label>
+            <input
+              type="checkbox"
+              checked={showTilt}
+              onChange={e => setShowTilt(e.target.checked)}
+            />{' '}
+            show tilt
+          </label>
+          {showTilt ? (
+            <Tilt>
+              <div className="totally-centered">VERITECHIE</div>
+            </Tilt>
+          ) : null}
+        </div>
+      )
+    }
+
+    ReactDOM.render(<App />, document.getElementById('root'))
+  </script>
+
+</body>

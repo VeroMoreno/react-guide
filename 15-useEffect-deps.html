@@ -1,0 +1,61 @@
+<body>
+  <h2>Administrar el array de dependencia useEffect hook</h2>
+  <p>Nuestra devolución de llamada de efecto secundario se llama más de lo necesario, y aprenderemos cómo agregar un array de dependencia para que se actualice solo cuando cambie el estado en el que se basa</p>
+  <hr>
+  <div id="root"></div>
+
+  <script src="https://unpkg.com/react@16.12.0/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@16.12.0/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.8.3/babel.js"></script>
+
+  <script type="text/babel">
+    function Dear() {
+
+      const [name, setName] = React.useState(() => {
+        return window.localStorage.getItem('name') || ''
+      })
+
+
+      React.useEffect(() => {
+        console.log('controlled name')
+        window.localStorage.setItem('name', name);
+      }, [name])
+      // Básicamente este hook se estaba lanzando a cualquier cambio de la aplicación. Esto no significa que es un error, pero es una buena práctica para evitar que la aplicación se ejecute muchas veces.
+
+      const handleChange = event => {
+        setName(event.target.value);
+      }
+
+      return(
+        <div>
+          <form>
+            <label htmlFor="name">Nombre:</label>
+            <input
+              id="name"
+              onChange={handleChange}
+              value={name}
+            />
+          </form>
+          {name ? <p>Hola {name}</p> : 'Escribe tu nombre aqui'}
+        </div>
+      )
+    }
+
+    function App() {
+      const [count, setCount] = React.useState(0);
+      return(
+        <>
+          <button
+            onClick={() => setCount(count + 1)}
+          >
+            {count}
+          </button>
+          <Dear/>
+        </>
+      )
+    }
+
+    ReactDOM.render(<App/>, document.getElementById('root'));
+  </script>
+
+</body>

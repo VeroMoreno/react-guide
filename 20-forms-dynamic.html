@@ -1,0 +1,45 @@
+<body>
+  <h2>Formularios dinámicos en React</h2>
+  <p>Si alguna vez necesita saber exactamente lo que escribe el usuario mientras lo escribe, puede usar el evento onChange para obtener acceso al valor de la entrada y actualizarlo en el estado de su componente, entonces los cambios en ese valor activarán una nueva renderización de su componente. Ese valor de estado será el que haya escrito el usuario, lo que nos permitirá crear este mensaje de error en función de si el nombre de usuario está en minúsculas.</p>
+  <div id="root"></div>
+  <script src="https://unpkg.com/react@16.12.0/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@16.12.0/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.8.3/babel.js"></script>
+
+  <script type="text/babel">
+
+    function UsernameForm() {
+      const [username, setUsername] = React.useState('')
+      const isLowerCase = username === username.toLowerCase()
+      const error = isLowerCase ? null : 'El usuario debe escribirse en minúsculas'
+
+      function handleSubmit(event) {
+        event.preventDefault()
+        alert(`Tu introduciste: ${username}`)
+      }
+
+      function handleChange(event) {
+        setUsername(event.target.value)
+      }
+
+      return (
+        <form onSubmit={handleSubmit}>
+          <div>
+            <label htmlFor="usernameInput">Usuario: </label>
+            <input
+              id="usernameInput"
+              type="text"
+              onChange={handleChange} // Sabemos lo que el usuario está escribiendo.
+            />
+          </div>
+          <div style={{color: 'red'}}>{error}</div>
+          <button disabled={Boolean(error)} type="submit">
+            Enviar
+          </button>
+        </form>
+      )
+    }
+
+    ReactDOM.render(<UsernameForm />, document.getElementById('root'))
+  </script>
+</body>

@@ -1,0 +1,51 @@
+<body>
+  <h2>Usando Event Handlers con React</h2>
+  <p>Breve resumen de los controladores de eventos. Aquí verás como a través de dos funciones con distintos eventos como pueden ser onClick o onChange se ejecutan a través de 2 funciones para renderizarse de nuevo a través del estado.</p>
+  <div id="root"></div>
+
+  <script src="https://unpkg.com/react@16.12.0/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@16.12.0/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.8.3/babel.js"></script>
+
+  <script type="text/babel">
+    const state = {eventCount: 0, username: ''};
+
+    function App() {
+      function handleClick() {
+        setState({eventCount: state.eventCount + 1})
+      }
+
+      function handleEvent(event) {
+        console.log(event)
+        setState({username: event.target.value})
+      }
+
+      return(
+        <div>
+          <p>Hay {state.eventCount} eventos.</p>
+          <button
+            onClick={handleClick}>
+            Click me
+          </button>
+          <p>Tu has escrito: {state.username}</p>
+          <input
+          type="text"
+          onChange={handleEvent}
+          />
+        </div>
+      )
+    }
+
+    function setState(newState) {
+      Object.assign(state, newState)
+      renderApp()
+    }
+
+    function renderApp() {
+      ReactDOM.render(<App />, document.getElementById('root'))
+    }
+
+    renderApp()
+  </script>
+
+</body>

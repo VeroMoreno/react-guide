@@ -1,0 +1,42 @@
+<body>
+  <h2>Formularios básicos en React</h2>
+  <p></p>
+  <p>En lugar de poner un controlador onClick en el botón, colocamos un controlador onSubmit en el formulario. De esa manera, cualquier otra forma en que el usuario intente enviar el formulario llamará a nuestro controlador de envío.</p>
+  <p><code>event.preventDefault()</code> Lo usaremos para evitar la actualizacion de la pagina completa</p>
+  <p><code>event.target.elements.idDeNuestroInput.value</code> Para obtener el valor del form</p>
+  <hr>
+  <div id="root"></div>
+
+  <script src="https://unpkg.com/react@16.12.0/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@16.12.0/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.8.3/babel.js"></script>
+
+  <script type="text/babel">
+    function UsernameForm() {
+
+      function handleSubmit(event) {
+        // Para evitar una actualización de página completa, usamos event.preventDefault
+        event.preventDefault()
+        // recuperamos la entrada del usuario usando el objetivo del evento para obtener el formulario
+        console.log(event.target.elements)
+        const username = event.target.elements.usernameInput.value
+        // avisas al usuario o lo envías a un servidor backend!
+        alert(`Tu tecleaste: ${username}`)
+      }
+
+      return (
+        // colocamos aqui el controlador evitando asi que el usuario intente manipular el formulario de una manera distinta.
+        <form onSubmit={handleSubmit}>
+          <div>
+            <label htmlFor="usernameInput">Usuario: </label>
+            <input id="usernameInput" type="text" />
+          </div>
+          <button type="submit">Enviar</button>
+        </form>
+      )
+    }
+
+    ReactDOM.render(<UsernameForm />, document.getElementById('root'))
+  </script>
+
+</body>

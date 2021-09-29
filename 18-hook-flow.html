@@ -1,0 +1,167 @@
+<body>
+  <h2>Entendiendo el flujo de los hooks</h2>
+  <a target="_blank" href="https://github.com/donavon/hook-flow">Flujo de hooks (imagen grafica)</a>
+  <a href="https://kentcdodds.com/blog/react-hooks-pitfalls">Enlace guay a consejos para evitar las trampas de React Hooks</a>
+  <div>
+    <h3>Show Child</h3>
+    <ul>
+      <li>Volvemos a ejecutar el inicio y el fin de app</li>
+      <li>El flujo continúa por B-1</li>
+      <li>Se comporta de la misma manera que con el componente padre: CHILD Inicio, state, fin, useEffect sin, vacia y con dependencias, en ese orden.</li>
+    </ul>
+
+    <p><strong>¿Pero que pasa después?</strong></p>
+    El componente padre APP se ejecuta de nuevo, pero solo lo hacen:
+    <ul>
+      <li>useEffect limpieza sin dependencia</li>
+      <li>useEffect limpieza con dependencia</li>
+    </ul>
+    Y luego vuelve a pasar por los mismos hooks pero sin la limpieza
+
+    <p><strong>¿porqué sucede esto?</strong></p>
+      Habrás notado que estos hooks no fueron llamados. Esto se debe a que los callbacks de useEffect solo se llaman si no tienen ninguna dependencia en la lista o si tienen una dependencia en la lista, y una de esas dependencias se cambia.
+
+    <h3>Boton</h3>
+    Cuando hacemos click en el boton proporcionamos una funcion de update donde modificamos el estado, esto va a lanzar una nueva renderización, pero la aplicacion no registra nada nuevo, esto significa que la actualización solo reside dentor del componente, por lo que React sabe que este componente es el único que debe volver a renderizarse.
+
+    <p>Se ejecutan los useEffects de limpieza vacios y con dependencias, como el padre.</p>
+
+    <h3>Hidden Child</h3>
+
+    Al esconder el componente hijo, se ejecutan todos los callbacks de useEffect de limpieza, Eso significa que necesito eliminar al child de la página, por lo que voy a desmontar el componente y llamar a todas las limpiezas para todos los efectos de uso que ese child tenía.
+  </div>
+  <hr style="margin:40px 0">
+  <div id="root"></div>
+  <script src="https://unpkg.com/react@16.12.0/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@16.12.0/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.8.3/babel.js"></script>
+  <script type="text/babel">
+
+    function Child() {
+      // B-1. Cuando hacemos click en el check
+      console.log("--- CHILD ---")
+      // B-2
+      console.log('%c    Child: Render inicial', 'color: MediumSpringGreen')
+
+      const [count, setCount] = React.useState(() => {
+        // B-3
+        console.log('%c    Child: useState callback', 'color: tomato')
+        return 0
+      })
+
+      React.useEffect(() => {
+        // B-4
+        console.log('%c    Child: useEffect sin dependencias', 'color: LightCoral')
+        return () => {
+          console.log(
+            '%c    Child: useEffect limpieza sin dependencias',
+            'color: LightCoral',
+          )
+        }
+      })
+
+      React.useEffect(() => {
+        // B-4.1
+        console.log(
+          '%c    Child: useEffect dependencias vacias',
+          'color: MediumTurquoise',
+        )
+        return () => {
+          console.log('%c    Child: useEffect limpieza de dependencias vacias','color: MediumTurquoise',)
+        }
+      }, [])
+
+      React.useEffect(() => {
+        // B-4.2
+        console.log('%c    Child: useEffect con dependencias', 'color: HotPink')
+        return () => {
+          console.log(
+            '%c    Child: useEffect limpieza con dependencias',
+            'color: HotPink',
+          )
+        }
+      }, [count])
+
+      const element = (
+        <button onClick={() => setCount(previousCount => previousCount + 1)}>
+          {count}
+        </button>
+      )
+
+      console.log('%c    Child: Render final', 'color: MediumSpringGreen')
+
+      return element
+    }
+
+    // A-1. Esta es la primera aplicacion que se ejecuta
+    function App() {
+      console.log("---APP---")
+      // A-2. Entra por la aplicacion
+      console.log('%cApp: Render inicial', 'color: MediumSpringGreen')
+
+      const [showChild, setShowChild] = React.useState(() => {
+        // A-3. Inmediatamente React va a llamar a esta función para recuperar el estado inicial de nuestro "show child state"
+        console.log('%cApp: useState callback', 'color: tomato')
+        return false
+      })
+
+      React.useEffect(() => {
+        // A-5. pasa por aqui
+        console.log('%cApp: useEffect sin dependencias', 'color: LightCoral')
+        return () => {
+          console.log('%cApp: useEffect limpieza sin dependencias', 'color: LightCoral')
+        }
+      })
+
+      React.useEffect(() => {
+        // A-5.1 Luego por aqui
+        console.log('%cApp: useEffect dependencia vacía', 'color: MediumTurquoise')
+        return () => {
+          console.log(
+            '%cApp: useEffect limpieza de dependencia vacía',
+            'color: MediumTurquoise',
+          )
+        }
+      }, [])
+
+      // Tenemos una lista de dependencias, pero está vacía y, por lo tanto, no se cambia ninguna de las dependencias, porque no tiene ninguna. Esta callback useEffect y su limpieza no se llamarán en los updates.
+      React.useEffect(() => {
+        // A-5.2 Y luego por aqui
+        console.log('%cApp: useEffect con dependencia', 'color: HotPink')
+        return () => {
+          console.log('%cApp: useEffect limpieza con dependencia', 'color: HotPink')
+        }
+      }, [showChild])
+
+      const element = (
+        <>
+          <label>
+            <input
+              type="checkbox"
+              checked={showChild}
+              onChange={e => setShowChild(e.target.checked)}
+            />{' '}
+            show child
+          </label>
+          <div
+            style={{
+              padding: 10,
+              margin: 10,
+              height: 30,
+              width: 30,
+              border: 'solid',
+            }}
+          >
+            {showChild ? <Child /> : null}
+          </div>
+        </>
+      )
+
+      // A-4. Termina de renderizar y ahora se va a los useEffect hooks
+      console.log('%cApp: Render final', 'color: MediumSpringGreen')
+
+      return element
+    }
+    ReactDOM.render(<App />, document.getElementById('root'))
+  </script>
+</body>
